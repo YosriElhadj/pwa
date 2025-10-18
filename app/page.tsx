@@ -4,18 +4,25 @@ import { useState } from 'react';
 import { useRecipes } from '@/hooks/useRecipes';
 import RecipeCard from '@/components/RecipeCard';
 import Link from 'next/link';
+import { useSession, signOut } from 'next-auth/react';
 
 export default function Home() {
+  const { data: session } = useSession();
   const { recipes, loading, isOnline, updateRecipe } = useRecipes();
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('Toutes');
   const [selectedDifficulty, setSelectedDifficulty] = useState('Toutes');
+  const [showUserMenu, setShowUserMenu] = useState(false);
 
   const handleToggleFavorite = async (id: string) => {
     const recipe = recipes.find(r => r._id === id);
     if (recipe) {
       await updateRecipe(id, { ...recipe, isFavorite: !recipe.isFavorite });
     }
+  };
+
+  const handleSignOut = async () => {
+    await signOut({ callbackUrl: '/login' });
   };
 
   // Filtrage des recettes
@@ -55,8 +62,8 @@ export default function Home() {
               {/* Status indicator avec animation */}
               <div className={`flex items-center gap-2 px-3 py-1.5 rounded-full shadow-md ${
                 isOnline 
-                  ? 'bg-gradient-to-r from-green-50 to-green-100 text-green-700 border border-green-200' 
-                  : 'bg-gradient-to-r from-orange-50 to-orange-100 text-orange-700 border border-orange-200'
+                  ? 'bg-green-50 text-green-700 border border-green-200' 
+                  : 'bg-orange-50 text-orange-700 border border-orange-200'
               }`}>
                 <div className={`w-2 h-2 rounded-full status-pulse ${isOnline ? 'bg-green-500' : 'bg-orange-500'}`} />
                 <span className="hidden xs:inline text-xs font-medium">
@@ -75,6 +82,44 @@ export default function Home() {
                 <span className="hidden sm:inline">Nouvelle</span>
                 <span className="sm:hidden">+</span>
               </Link>
+
+              {/* User Menu */}
+              <div className="relative">
+                <button
+                  onClick={() => setShowUserMenu(!showUserMenu)}
+                  className="flex items-center gap-2 px-3 py-2 rounded-xl hover:bg-white/50 transition border border-gray-200 bg-white shadow-md"
+                >
+                  <div className="w-8 h-8 bg-gradient-to-br from-green-500 to-green-600 rounded-full flex items-center justify-center text-white font-bold text-sm">
+                    {session?.user?.name?.charAt(0).toUpperCase() || 'U'}
+                  </div>
+                  <span className="hidden md:block text-sm font-medium text-gray-700">
+                    {session?.user?.name || 'Utilisateur'}
+                  </span>
+                  <svg className="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                  </svg>
+                </button>
+
+                {/* Dropdown Menu */}
+                {showUserMenu && (
+                  <div className="absolute right-0 mt-2 w-56 bg-white rounded-xl shadow-xl border border-gray-200 py-2 animate-fadeIn">
+                    <div className="px-4 py-3 border-b border-gray-100">
+                      <p className="text-sm font-semibold text-gray-800">{session?.user?.name}</p>
+                      <p className="text-xs text-gray-500 truncate">{session?.user?.email}</p>
+                    </div>
+                    
+                    <button
+                      onClick={handleSignOut}
+                      className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition flex items-center gap-2"
+                    >
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                      </svg>
+                      Déconnexion
+                    </button>
+                  </div>
+                )}
+              </div>
             </div>
           </div>
         </div>
@@ -84,10 +129,10 @@ export default function Home() {
       <section className="container mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
         <div className="max-w-2xl mx-auto text-center mb-8 animate-fadeIn">
           <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-800 mb-3">
-            Découvrez vos recettes préférées
+            Bonjour {session?.user?.name?.split(' ')[0]} 👋
           </h2>
           <p className="text-gray-600 text-sm sm:text-base mb-6">
-            Explorez, créez et savourez des moments culinaires inoubliables
+            Découvrez vos recettes préférées
           </p>
 
           {/* Barre de recherche moderne */}
@@ -97,7 +142,7 @@ export default function Home() {
               placeholder="Rechercher une recette..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full px-6 py-4 pl-12 rounded-2xl border-2 border-gray-200 focus:border-green-500 focus:ring-4 focus:ring-green-100 transition-all shadow-lg"
+              className="w-full px-6 py-4 pl-12 rounded-2xl border-2 border-gray-200 focus:border-green-500 focus:ring-4 focus:ring-green-100 transition-all shadow-lg text-base"
             />
             <svg 
               className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400"
@@ -111,18 +156,17 @@ export default function Home() {
         </div>
 
         {/* Filtres avec chips modernes */}
-        <div className="flex flex-wrap gap-4 justify-center mb-8 animate-fadeIn">
-          {/* Filtre Catégorie */}
-          <div className="flex flex-wrap gap-2">
-            <span className="text-sm font-medium text-gray-700 self-center">Catégorie:</span>
+        <div className="flex flex-wrap gap-3 justify-center mb-6 animate-fadeIn">
+          <span className="text-sm font-medium text-gray-700 self-center">Catégorie:</span>
+          <div className="flex flex-wrap gap-2 justify-center">
             {categories.map(category => (
               <button
                 key={category}
                 onClick={() => setSelectedCategory(category)}
                 className={`px-4 py-2 rounded-full text-sm font-medium transition-all transform hover:scale-105 ${
                   selectedCategory === category
-                    ? 'bg-gradient-to-r from-green-500 to-green-600 text-white shadow-lg'
-                    : 'bg-white text-gray-700 border border-gray-200 hover:border-green-300 shadow-md'
+                    ? 'bg-green-600 text-white shadow-lg'
+                    : 'bg-white text-gray-700 border border-gray-300 hover:border-green-300 shadow-md'
                 }`}
               >
                 {category}
@@ -131,18 +175,17 @@ export default function Home() {
           </div>
         </div>
 
-        <div className="flex flex-wrap gap-4 justify-center mb-12 animate-fadeIn">
-          {/* Filtre Difficulté */}
-          <div className="flex flex-wrap gap-2">
-            <span className="text-sm font-medium text-gray-700 self-center">Difficulté:</span>
+        <div className="flex flex-wrap gap-3 justify-center mb-12 animate-fadeIn">
+          <span className="text-sm font-medium text-gray-700 self-center">Difficulté:</span>
+          <div className="flex flex-wrap gap-2 justify-center">
             {difficulties.map(difficulty => (
               <button
                 key={difficulty}
                 onClick={() => setSelectedDifficulty(difficulty)}
                 className={`px-4 py-2 rounded-full text-sm font-medium transition-all transform hover:scale-105 ${
                   selectedDifficulty === difficulty
-                    ? 'bg-gradient-to-r from-blue-500 to-blue-600 text-white shadow-lg'
-                    : 'bg-white text-gray-700 border border-gray-200 hover:border-blue-300 shadow-md'
+                    ? 'bg-blue-600 text-white shadow-lg'
+                    : 'bg-white text-gray-700 border border-gray-300 hover:border-blue-300 shadow-md'
                 }`}
               >
                 {difficulty}

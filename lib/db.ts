@@ -5,6 +5,7 @@ interface RecipeDB extends DBSchema {
     key: string;
     value: {
       _id: string;
+      userId: string;
       title: string;
       ingredients: { name: string; quantity: string }[];
       steps: string[];
@@ -16,7 +17,11 @@ interface RecipeDB extends DBSchema {
       createdAt: Date;
       synced: boolean;
     };
-    indexes: { 'by-category': string; 'by-favorite': number };
+    indexes: { 
+      'by-category': string; 
+      'by-favorite': number;
+      'by-user': string;
+    };
   };
   syncQueue: {
     key: number;
@@ -34,16 +39,28 @@ let db: IDBPDatabase<RecipeDB> | null = null;
 
 export async function initDB() {
   if (!db) {
-    db = await openDB<RecipeDB>('recipe-manager-db', 1, {
-      upgrade(database) {
+    db = await openDB<RecipeDB>('recipe-manager-db', 2, {
+      upgrade(database, oldVersion, newVersion, transaction) {
+        // Création du store recipes s'il n'existe pas
         if (!database.objectStoreNames.contains('recipes')) {
           const recipeStore = database.createObjectStore('recipes', {
             keyPath: '_id',
           });
           recipeStore.createIndex('by-category', 'category');
           recipeStore.createIndex('by-favorite', 'isFavorite');
+          recipeStore.createIndex('by-user', 'userId');
+        } else if (oldVersion < 2) {
+          // Si le store existe mais qu'on upgrade vers la version 2
+          // On récupère le store depuis la transaction d'upgrade
+          const recipeStore = transaction.objectStore('recipes');
+          
+          // Ajouter l'index by-user s'il n'existe pas
+          if (!recipeStore.indexNames.contains('by-user')) {
+            recipeStore.createIndex('by-user', 'userId');
+          }
         }
 
+        // Création du store syncQueue s'il n'existe pas
         if (!database.objectStoreNames.contains('syncQueue')) {
           database.createObjectStore('syncQueue', {
             keyPath: 'id',
@@ -56,6 +73,7 @@ export async function initDB() {
   return db;
 }
 
+// CRUD Operations
 export async function getAllRecipes() {
   const database = await initDB();
   return database.getAll('recipes');
@@ -64,6 +82,18 @@ export async function getAllRecipes() {
 export async function getRecipeById(id: string) {
   const database = await initDB();
   return database.get('recipes', id);
+}
+
+export async function getRecipesByUser(userId: string) {
+  const database = await initDB();
+  try {
+    return await database.getAllFromIndex('recipes', 'by-user', userId);
+  } catch (error) {
+    console.error('Error getting recipes by user:', error);
+    // Fallback: filtrer manuellement si l'index n'existe pas encore
+    const allRecipes = await database.getAll('recipes');
+    return allRecipes.filter(recipe => recipe.userId === userId);
+  }
 }
 
 export async function addRecipe(recipe: any) {
@@ -99,6 +129,16 @@ export async function deleteRecipe(id: string) {
   });
 }
 
+export async function getFavoriteRecipes() {
+  const database = await initDB();
+  return database.getAllFromIndex('recipes', 'by-favorite', 1);
+}
+
+export async function getRecipesByCategory(category: string) {
+  const database = await initDB();
+  return database.getAllFromIndex('recipes', 'by-category', category);
+}
+
 export async function getSyncQueue() {
   const database = await initDB();
   return database.getAll('syncQueue');
@@ -108,4 +148,14 @@ export async function clearSyncQueue() {
   const database = await initDB();
   const tx = database.transaction('syncQueue', 'readwrite');
   await tx.objectStore('syncQueue').clear();
+}
+
+// Fonction utilitaire pour nettoyer la base de données (développement)
+export async function clearAllData() {
+  const database = await initDB();
+  const tx1 = database.transaction('recipes', 'readwrite');
+  await tx1.objectStore('recipes').clear();
+  
+  const tx2 = database.transaction('syncQueue', 'readwrite');
+  await tx2.objectStore('syncQueue').clear();
 }
