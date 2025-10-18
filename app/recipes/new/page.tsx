@@ -41,7 +41,7 @@ export default function Home() {
                 <span className="text-2xl sm:text-3xl">🍳</span>
               </div>
               <div>
-                <h1 className="text-lg sm:text-xl md:text-2xl font-bold bg-gradient-to-r from-green-600 to-green-800 bg-clip-text text-transparent">
+                <h1 className="text-lg sm:text-xl md:text-2xl font-bold bg-gradient-to-r from-green-600 to-green-800 text-transparent bg-clip-text">
                   Mes Recettes
                 </h1>
                 <p className="text-xs text-gray-500 hidden sm:block">
@@ -55,8 +55,8 @@ export default function Home() {
               {/* Status indicator avec animation */}
               <div className={`flex items-center gap-2 px-3 py-1.5 rounded-full shadow-md ${
                 isOnline 
-                  ? 'bg-gradient-to-r from-green-50 to-green-100 text-green-700 border border-green-200' 
-                  : 'bg-gradient-to-r from-orange-50 to-orange-100 text-orange-700 border border-orange-200'
+                  ? 'bg-green-50 text-green-700 border border-green-200' 
+                  : 'bg-orange-50 text-orange-700 border border-orange-200'
               }`}>
                 <div className={`w-2 h-2 rounded-full status-pulse ${isOnline ? 'bg-green-500' : 'bg-orange-500'}`} />
                 <span className="hidden xs:inline text-xs font-medium">
@@ -97,7 +97,7 @@ export default function Home() {
               placeholder="Rechercher une recette..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full px-6 py-4 pl-12 rounded-2xl border-2 border-gray-200 focus:border-green-500 focus:ring-4 focus:ring-green-100 transition-all shadow-lg"
+              className="w-full px-6 py-4 pl-12 rounded-2xl border-2 border-gray-200 focus:border-green-500 focus:ring-4 focus:ring-green-100 transition-all shadow-lg text-base"
             />
             <svg 
               className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400"
@@ -111,18 +111,17 @@ export default function Home() {
         </div>
 
         {/* Filtres avec chips modernes */}
-        <div className="flex flex-wrap gap-4 justify-center mb-8 animate-fadeIn">
-          {/* Filtre Catégorie */}
-          <div className="flex flex-wrap gap-2">
-            <span className="text-sm font-medium text-gray-700 self-center">Catégorie:</span>
+        <div className="flex flex-wrap gap-3 justify-center mb-6 animate-fadeIn">
+          <span className="text-sm font-medium text-gray-700 self-center">Catégorie:</span>
+          <div className="flex flex-wrap gap-2 justify-center">
             {categories.map(category => (
               <button
                 key={category}
                 onClick={() => setSelectedCategory(category)}
                 className={`px-4 py-2 rounded-full text-sm font-medium transition-all transform hover:scale-105 ${
                   selectedCategory === category
-                    ? 'bg-gradient-to-r from-green-500 to-green-600 text-white shadow-lg'
-                    : 'bg-white text-gray-700 border border-gray-200 hover:border-green-300 shadow-md'
+                    ? 'bg-green-600 text-white shadow-lg'
+                    : 'bg-white text-gray-700 border border-gray-300 hover:border-green-300 shadow-md'
                 }`}
               >
                 {category}
@@ -131,18 +130,17 @@ export default function Home() {
           </div>
         </div>
 
-        <div className="flex flex-wrap gap-4 justify-center mb-12 animate-fadeIn">
-          {/* Filtre Difficulté */}
-          <div className="flex flex-wrap gap-2">
-            <span className="text-sm font-medium text-gray-700 self-center">Difficulté:</span>
+        <div className="flex flex-wrap gap-3 justify-center mb-12 animate-fadeIn">
+          <span className="text-sm font-medium text-gray-700 self-center">Difficulté:</span>
+          <div className="flex flex-wrap gap-2 justify-center">
             {difficulties.map(difficulty => (
               <button
                 key={difficulty}
                 onClick={() => setSelectedDifficulty(difficulty)}
                 className={`px-4 py-2 rounded-full text-sm font-medium transition-all transform hover:scale-105 ${
                   selectedDifficulty === difficulty
-                    ? 'bg-gradient-to-r from-blue-500 to-blue-600 text-white shadow-lg'
-                    : 'bg-white text-gray-700 border border-gray-200 hover:border-blue-300 shadow-md'
+                    ? 'bg-blue-600 text-white shadow-lg'
+                    : 'bg-white text-gray-700 border border-gray-300 hover:border-blue-300 shadow-md'
                 }`}
               >
                 {difficulty}
