@@ -7,12 +7,14 @@ declare module 'next-auth' {
       name: string;
       email: string;
     };
+    accessToken?: string; // Ajouter le token à la session
   }
 
   interface User {
     id: string;
     name: string;
     email: string;
+    accessToken?: string; // Ajouter le token
   }
 }
 
@@ -21,5 +23,6 @@ declare module 'next-auth/jwt' {
     id: string;
     email: string;
     name: string;
+    accessToken?: string; // Ajouter le token au JWT
   }
 }

@@ -1,6 +1,8 @@
 import type { NextAuthConfig } from 'next-auth';
 import Credentials from 'next-auth/providers/credentials';
 
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001/api';
+
 export const authConfig: NextAuthConfig = {
   pages: {
     signIn: '/login',
@@ -17,8 +19,8 @@ export const authConfig: NextAuthConfig = {
         }
 
         try {
-          // Appeler l'API route au lieu d'accéder directement à MongoDB
-          const response = await fetch(`${process.env.NEXTAUTH_URL}/api/auth/verify`, {
+          // Appeler le backend NestJS pour login
+          const response = await fetch(`${API_URL}/auth/login`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
@@ -31,8 +33,15 @@ export const authConfig: NextAuthConfig = {
             return null;
           }
 
-          const user = await response.json();
-          return user;
+          const data = await response.json();
+          
+          // data contient : { access_token, user: { id, email, name } }
+          return {
+            id: data.user.id,
+            email: data.user.email,
+            name: data.user.name,
+            accessToken: data.access_token, // IMPORTANT : On stocke le token JWT
+          };
         } catch (error) {
           console.error('Auth error:', error);
           return null;
@@ -53,10 +62,12 @@ export const authConfig: NextAuthConfig = {
       return isLoggedIn;
     },
     async jwt({ token, user }) {
+      // Lors du premier login, user contient les données de authorize()
       if (user) {
         token.id = user.id;
         token.email = user.email;
         token.name = user.name;
+        token.accessToken = (user as any).accessToken; // Stocker le JWT du backend
       }
       return token;
     },
@@ -65,13 +76,14 @@ export const authConfig: NextAuthConfig = {
         session.user.id = token.id as string;
         session.user.email = token.email as string;
         session.user.name = token.name as string;
+        (session as any).accessToken = token.accessToken; // Ajouter le token à la session
       }
       return session;
     },
   },
   session: {
     strategy: 'jwt',
-    maxAge: 30 * 24 * 60 * 60,
+    maxAge: 7 * 24 * 60 * 60, // 7 jours (comme le JWT backend)
   },
   secret: process.env.NEXTAUTH_SECRET,
 };

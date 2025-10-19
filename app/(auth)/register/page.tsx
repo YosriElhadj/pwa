@@ -4,6 +4,8 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001/api';
+
 export default function RegisterPage() {
   const router = useRouter();
   const [formData, setFormData] = useState({
@@ -33,7 +35,7 @@ export default function RegisterPage() {
     setLoading(true);
 
     try {
-      const response = await fetch('/api/auth/register', {
+      const response = await fetch(`${API_URL}/auth/register`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -46,14 +48,15 @@ export default function RegisterPage() {
       const data = await response.json();
 
       if (!response.ok) {
-        setError(data.error || 'Erreur lors de l\'inscription');
+        setError(data.message || 'Erreur lors de l\'inscription');
         return;
       }
 
       // Rediriger vers la page de connexion
       router.push('/login?registered=true');
     } catch (error) {
-      setError('Une erreur est survenue');
+      console.error('Registration error:', error);
+      setError('Une erreur est survenue lors de l\'inscription');
     } finally {
       setLoading(false);
     }

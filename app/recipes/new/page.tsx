@@ -17,6 +17,8 @@ export default function NewRecipePage() {
     ingredients: [{ name: '', quantity: '' }],
     steps: [''],
     image: '',
+    isPublic: false,  // NOUVEAU
+    tags: [] as string[],  
   });
 
   const [loading, setLoading] = useState(false);
@@ -198,6 +200,50 @@ export default function NewRecipePage() {
               placeholder="https://example.com/image.jpg"
             />
           </div>
+          {/* Visibilité */}
+                <div className="mb-6">
+                <div className="flex items-center justify-between p-4 bg-gradient-to-r from-green-50 to-blue-50 rounded-xl border border-green-100">
+                    <div className="flex-1">
+                    <label htmlFor="isPublic" className="block text-sm font-semibold text-gray-800 mb-1">
+                        Rendre cette recette publique 🌍
+                    </label>
+                    <p className="text-xs text-gray-600">
+                        Les autres utilisateurs pourront découvrir et aimer votre recette
+                    </p>
+                    </div>
+                    <label className="relative inline-flex items-center cursor-pointer ml-4">
+                    <input
+                        type="checkbox"
+                        id="isPublic"
+                        checked={formData.isPublic || false}
+                        onChange={(e) => setFormData({ ...formData, isPublic: e.target.checked })}
+                        className="sr-only peer"
+                    />
+                    <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-green-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-green-600"></div>
+                    </label>
+                </div>
+                </div>
+
+                    {/* Tags */}
+                    <div className="mb-6">
+                    <label htmlFor="tags" className="block text-sm font-semibold text-gray-700 mb-2">
+                        Tags (séparés par des virgules)
+                    </label>
+                    <input
+                        type="text"
+                        id="tags"
+                        value={formData.tags?.join(', ') || ''}
+                        onChange={(e) => setFormData({ 
+                        ...formData, 
+                        tags: e.target.value.split(',').map(t => t.trim()).filter(t => t) 
+                        })}
+                        className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-transparent transition"
+                        placeholder="végétarien, rapide, sansfour"
+                    />
+                    <p className="text-xs text-gray-500 mt-1">
+                        Exemple : végétarien, rapide, sansfour, dessert
+                    </p>
+                    </div>
 
           {/* Ingrédients */}
           <div className="mb-6">

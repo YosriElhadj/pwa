@@ -59,6 +59,16 @@ export default function Home() {
             
             {/* Actions */}
             <div className="flex items-center gap-2 sm:gap-4">
+              {/* Nouveau lien Découvrir */}
+                <Link
+                  href="/discover"
+                  className="flex items-center gap-2 px-3 py-2 rounded-xl hover:bg-white/50 transition border border-gray-200 bg-white shadow-md"
+                >
+                  <svg className="w-5 h-5 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                  </svg>
+                  <span className="hidden sm:inline text-sm font-medium text-gray-700">Découvrir</span>
+                </Link>
               {/* Status indicator avec animation */}
               <div className={`flex items-center gap-2 px-3 py-1.5 rounded-full shadow-md ${
                 isOnline 
