@@ -10,7 +10,14 @@ export interface PublicRecipe {
   category: string;
   difficulty: string;
   prepTime: number;
-  ingredients: { name: string; quantity: string }[];
+  ingredients: { 
+    name: string; 
+    quantity: string;
+    calories?: number;
+    protein?: number;
+    fat?: number;
+    carbs?: number;
+  }[];
   steps: string[];
   image?: string;
   likes: number;
@@ -19,6 +26,10 @@ export interface PublicRecipe {
   authorName: string;
   authorAvatar?: string;
   createdAt: Date;
+  totalCalories?: number;  // ADD
+  totalProtein?: number;   // ADD
+  totalFat?: number;       // ADD
+  totalCarbs?: number;     // ADD
 }
 
 export function usePublicRecipes() {
