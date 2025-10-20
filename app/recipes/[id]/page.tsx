@@ -145,7 +145,7 @@ export default function RecipeDetailPage({ params }: { params: { id: string } })
         <div className="text-center">
           <h2 className="text-2xl font-bold text-gray-800 mb-4">Recette introuvable</h2>
           <Link href="/" className="text-green-600 hover:text-green-700 font-medium">
-            Retour à l'accueil
+            Retour a l accueil
           </Link>
         </div>
       </div>
@@ -361,7 +361,7 @@ export default function RecipeDetailPage({ params }: { params: { id: string } })
             {/* Image URL */}
             <div className="mb-6">
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                URL de l'image
+                URL de l image
               </label>
               <input
                 type="url"

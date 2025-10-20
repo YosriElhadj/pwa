@@ -29,7 +29,7 @@ interface RecipeDB extends DBSchema {
       id?: number;
       action: 'create' | 'update' | 'delete';
       recipeId: string;
-      data: any;
+    data: RecipeDB['recipes']['value'] | null;  // ✅ Corrigé
       timestamp: Date;
     };
   };
