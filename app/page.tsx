@@ -5,6 +5,7 @@ import { useRecipes } from '@/hooks/useRecipes';
 import RecipeCard from '@/components/RecipeCard';
 import Link from 'next/link';
 import { useSession, signOut } from 'next-auth/react';
+import InstallButton from '@/components/InstallButton';
 
 export default function Home() {
   const { data: session } = useSession();
@@ -38,6 +39,8 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-50 via-white to-blue-50">
+      {/* Bouton d'installation PWA */}
+      <InstallButton />
       {/* Header avec effet glassmorphism */}
       <header className="sticky top-0 z-50 glass shadow-lg border-b border-white/20">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">

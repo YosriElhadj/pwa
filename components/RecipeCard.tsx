@@ -51,7 +51,7 @@ export default function RecipeCard({ recipe, onToggleFavorite }: RecipeCardProps
               <span className="text-6xl mb-2 block opacity-40">
                 {categoryEmojis[recipe.category] || '🍳'}
               </span>
-              <p className="text-gray-400 text-sm font-medium">Pas d'image</p>
+              <p className="text-gray-400 text-sm font-medium">Pas d&apos;image</p>
             </div>
           </div>
         )}

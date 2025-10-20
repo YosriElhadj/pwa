@@ -3,6 +3,13 @@ import Credentials from 'next-auth/providers/credentials';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001/api';
 
+interface UserWithToken {
+  id: string;
+  email: string;
+  name: string;
+  accessToken: string;
+}
+
 export const authConfig: NextAuthConfig = {
   pages: {
     signIn: '/login',
@@ -19,7 +26,6 @@ export const authConfig: NextAuthConfig = {
         }
 
         try {
-          // Appeler le backend NestJS pour login
           const response = await fetch(`${API_URL}/auth/login`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -35,13 +41,12 @@ export const authConfig: NextAuthConfig = {
 
           const data = await response.json();
           
-          // data contient : { access_token, user: { id, email, name } }
           return {
             id: data.user.id,
             email: data.user.email,
             name: data.user.name,
-            accessToken: data.access_token, // IMPORTANT : On stocke le token JWT
-          };
+            accessToken: data.access_token,
+          } as UserWithToken;
         } catch (error) {
           console.error('Auth error:', error);
           return null;
@@ -62,12 +67,12 @@ export const authConfig: NextAuthConfig = {
       return isLoggedIn;
     },
     async jwt({ token, user }) {
-      // Lors du premier login, user contient les données de authorize()
       if (user) {
-        token.id = user.id;
-        token.email = user.email;
-        token.name = user.name;
-        token.accessToken = (user as any).accessToken; // Stocker le JWT du backend
+        const userWithToken = user as UserWithToken;
+        token.id = userWithToken.id;
+        token.email = userWithToken.email;
+        token.name = userWithToken.name;
+        token.accessToken = userWithToken.accessToken;
       }
       return token;
     },
@@ -76,14 +81,14 @@ export const authConfig: NextAuthConfig = {
         session.user.id = token.id as string;
         session.user.email = token.email as string;
         session.user.name = token.name as string;
-        (session as any).accessToken = token.accessToken; // Ajouter le token à la session
+        (session as { accessToken?: string }).accessToken = token.accessToken as string;
       }
       return session;
     },
   },
   session: {
     strategy: 'jwt',
-    maxAge: 7 * 24 * 60 * 60, // 7 jours (comme le JWT backend)
+    maxAge: 7 * 24 * 60 * 60,
   },
   secret: process.env.NEXTAUTH_SECRET,
 };

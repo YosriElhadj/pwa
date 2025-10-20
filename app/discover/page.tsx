@@ -50,10 +50,9 @@ export default function DiscoverPage() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  const handleLikeUpdate = (recipeId: string, newLikes: number) => {
-    // Optimistic UI update
-    // Cette fonction pourrait être utilisée pour mettre à jour l'état local
-  };
+  const handleLikeUpdate = () => {
+  // Optimistic UI update - peut être implémenté plus tard
+};
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-50 via-white to-blue-50">

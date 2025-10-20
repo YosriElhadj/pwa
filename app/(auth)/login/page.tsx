@@ -33,7 +33,7 @@ export default function LoginPage() {
 
       router.push('/');
       router.refresh();
-    } catch (error) {
+    } catch {
       setError('Une erreur est survenue');
     } finally {
       setLoading(false);
@@ -43,7 +43,6 @@ export default function LoginPage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-50 via-white to-blue-50 flex items-center justify-center px-4">
       <div className="max-w-md w-full">
-        {/* Logo */}
         <div className="text-center mb-8">
           <div className="inline-flex items-center justify-center w-16 h-16 gradient-primary rounded-2xl shadow-lg mb-4">
             <span className="text-4xl">🍳</span>
@@ -56,7 +55,6 @@ export default function LoginPage() {
           </p>
         </div>
 
-        {/* Form */}
         <div className="bg-white rounded-2xl shadow-xl p-8 border border-gray-100">
           <form onSubmit={handleSubmit} className="space-y-6">
             {error && (
@@ -70,7 +68,6 @@ export default function LoginPage() {
               </div>
             )}
 
-            {/* Email */}
             <div>
               <label htmlFor="email" className="block text-sm font-semibold text-gray-700 mb-2">
                 Email
@@ -86,7 +83,6 @@ export default function LoginPage() {
               />
             </div>
 
-            {/* Password */}
             <div>
               <label htmlFor="password" className="block text-sm font-semibold text-gray-700 mb-2">
                 Mot de passe
@@ -102,7 +98,6 @@ export default function LoginPage() {
               />
             </div>
 
-            {/* Submit Button */}
             <button
               type="submit"
               disabled={loading}
@@ -119,12 +114,11 @@ export default function LoginPage() {
             </button>
           </form>
 
-          {/* Register Link */}
           <div className="mt-6 text-center">
             <p className="text-sm text-gray-600">
               Pas encore de compte ?{' '}
               <Link href="/register" className="text-green-600 hover:text-green-700 font-semibold">
-                S&#39;inscrire
+                S&apos;inscrire
               </Link>
             </p>
           </div>

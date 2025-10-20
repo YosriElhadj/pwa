@@ -16,30 +16,31 @@ export function useRecipes() {
   // Récupérer le token depuis la session
   const token = (session as any)?.accessToken;
 
-  // Charger les recettes
-  useEffect(() => {
-    async function loadRecipes() {
-      if (!session?.user?.id) {
-        setLoading(false);
-        return;
-      }
+// Charger les recettes
+useEffect(() => {
+  async function loadRecipes() {
+    if (!session?.user?.id) {
+      setLoading(false);
+      return;
+    }
 
-      setLoading(true);
-      try {
-        if (isOnline && token) {
-          console.log('🟢 Fetching recipes from backend...');
-          
-          const response = await fetch(`${API_URL}/recipes`, {
-            headers: {
-              'Authorization': `Bearer ${token}`,
-            },
-          });
-          
-          console.log('🟢 Response status:', response.status);
-          
-          if (response.ok) {
-            const data = await response.json();
-            console.log('🟢 Recipes loaded:', data.length);
+    setLoading(true);
+    try {
+      if (isOnline && token) {
+        console.log('🟢 Fetching recipes from backend...');
+        
+        // ✅ CHANGEZ ICI
+        const response = await fetch(`${API_URL}/recipes/my`, {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+          },
+        });
+        
+        console.log('🟢 Response status:', response.status);
+        
+        if (response.ok) {
+          const data = await response.json();
+          console.log('🟢 Recipes loaded:', data.length);
             
             // Sauvegarder dans IndexedDB
             const db = await idb.initDB();

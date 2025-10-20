@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { useParams, useRouter } from 'next/navigation';
+import { useParams } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useLike } from '@/hooks/useLike';
@@ -27,7 +27,6 @@ interface Recipe {
 
 export default function PublicRecipeDetailPage() {
   const params = useParams();
-  const router = useRouter();
   const { toggleLike } = useLike();
   
   const [recipe, setRecipe] = useState<Recipe | null>(null);
@@ -86,7 +85,6 @@ export default function PublicRecipeDetailPage() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Header */}
       <header className="sticky top-0 z-50 bg-white shadow-sm">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-14 sm:h-16 md:h-20">
@@ -98,7 +96,6 @@ export default function PublicRecipeDetailPage() {
             </Link>
 
             <div className="flex items-center gap-2 sm:gap-4">
-              {/* Bouton Like */}
               <button
                 onClick={handleLike}
                 className="flex items-center gap-2 px-4 py-2 rounded-full bg-white border border-gray-200 hover:border-red-300 hover:bg-red-50 transition"
@@ -115,17 +112,15 @@ export default function PublicRecipeDetailPage() {
                     d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"
                   />
                 </svg>
-                <span className="font-medium text-sm">{likes}</span>
+                <span className="font-medium text-sm">{likes} j&apos;aime</span>
               </button>
             </div>
           </div>
         </div>
       </header>
 
-      {/* Content */}
       <main className="container mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 max-w-4xl">
         <div className="bg-white rounded-lg shadow-md overflow-hidden">
-          {/* Image */}
           {recipe.image && (
             <div className="relative w-full h-64 sm:h-80 md:h-96 bg-gray-200">
               <Image
@@ -138,7 +133,6 @@ export default function PublicRecipeDetailPage() {
           )}
 
           <div className="p-6 sm:p-8">
-            {/* Auteur */}
             <div className="flex items-center gap-3 mb-4 pb-4 border-b border-gray-100">
               <div className="w-12 h-12 bg-gradient-to-br from-green-500 to-green-600 rounded-full flex items-center justify-center text-white font-bold text-lg">
                 {recipe.authorName?.charAt(0).toUpperCase() || 'A'}
@@ -149,18 +143,16 @@ export default function PublicRecipeDetailPage() {
               </div>
             </div>
 
-            {/* Titre et Stats */}
             <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-800 mb-4">
               {recipe.title}
             </h1>
 
-            {/* Stats sociales */}
             <div className="flex items-center gap-6 mb-6">
               <div className="flex items-center gap-2 text-gray-600">
                 <svg className="w-5 h-5 text-red-500" fill="currentColor" viewBox="0 0 20 20">
                   <path fillRule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clipRule="evenodd" />
                 </svg>
-                <span className="font-medium">{likes} j'aime</span>
+                <span className="font-medium">{likes} j&apos;aime</span>
               </div>
               <div className="flex items-center gap-2 text-gray-600">
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -171,7 +163,6 @@ export default function PublicRecipeDetailPage() {
               </div>
             </div>
 
-            {/* Badges */}
             <div className="flex flex-wrap gap-3 mb-6">
               <span className="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm font-medium">
                 {recipe.category}
@@ -187,7 +178,6 @@ export default function PublicRecipeDetailPage() {
               </span>
             </div>
 
-            {/* Tags */}
             {recipe.tags && recipe.tags.length > 0 && (
               <div className="flex flex-wrap gap-2 mb-6">
                 {recipe.tags.map((tag, index) => (
@@ -201,7 +191,6 @@ export default function PublicRecipeDetailPage() {
               </div>
             )}
 
-            {/* Ingrédients */}
             <div className="mb-8">
               <h2 className="text-xl sm:text-2xl font-bold text-gray-800 mb-4 flex items-center gap-2">
                 <svg className="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -221,7 +210,6 @@ export default function PublicRecipeDetailPage() {
               </ul>
             </div>
 
-            {/* Étapes */}
             <div>
               <h2 className="text-xl sm:text-2xl font-bold text-gray-800 mb-4 flex items-center gap-2">
                 <svg className="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -243,7 +231,6 @@ export default function PublicRecipeDetailPage() {
           </div>
         </div>
 
-        {/* CTA : Créer une recette */}
         <div className="mt-8 bg-gradient-to-r from-green-50 to-blue-50 rounded-2xl p-6 sm:p-8 border border-green-100 text-center">
           <h3 className="text-xl sm:text-2xl font-bold text-gray-800 mb-3">
             Vous aussi, partagez vos recettes ! 👨‍🍳

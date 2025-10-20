@@ -96,7 +96,8 @@ export async function getRecipesByUser(userId: string) {
   }
 }
 
-export async function addRecipe(recipe: any) {
+// Ligne 99 - addRecipe
+export async function addRecipe(recipe: RecipeDB['recipes']['value']) {
   const database = await initDB();
   await database.add('recipes', { ...recipe, synced: false });
   await database.add('syncQueue', {
@@ -107,7 +108,8 @@ export async function addRecipe(recipe: any) {
   });
 }
 
-export async function updateRecipe(recipe: any) {
+// Ligne 110 - updateRecipe
+export async function updateRecipe(recipe: RecipeDB['recipes']['value']) {
   const database = await initDB();
   await database.put('recipes', { ...recipe, synced: false });
   await database.add('syncQueue', {
@@ -118,13 +120,14 @@ export async function updateRecipe(recipe: any) {
   });
 }
 
+// Ligne 119 - deleteRecipe (OK, mais pour la ligne 124)
 export async function deleteRecipe(id: string) {
   const database = await initDB();
   await database.delete('recipes', id);
   await database.add('syncQueue', {
     action: 'delete',
     recipeId: id,
-    data: null,
+    data: null as unknown as RecipeDB['recipes']['value'], // ✅ Corrigé
     timestamp: new Date(),
   });
 }
