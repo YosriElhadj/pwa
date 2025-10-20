@@ -82,72 +82,72 @@ useEffect(() => {
   }, [isOnline, session?.user?.id, token]);
 
   // Synchroniser quand on revient online
-  useEffect(() => {
-    async function syncData() {
-      if (isOnline && session?.user?.id && token) {
-        try {
-          const queue = await idb.getSyncQueue();
-          console.log('🔄 Syncing queue:', queue.length, 'items');
-          
-          for (const item of queue) {
-            try {
-              if (item.action === 'create') {
-                console.log('🔄 Syncing create:', item.data.title);
-                const response = await fetch(`${API_URL}/recipes`, {
-                  method: 'POST',
-                  headers: { 
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`,
-                  },
-                  body: JSON.stringify(item.data),
-                });
+  // Synchroniser quand on revient online
+useEffect(() => {
+  async function syncData() {
+    if (isOnline && session?.user?.id && token) {
+      try {
+        const queue = await idb.getSyncQueue();
+        console.log('🔄 Syncing queue:', queue.length, 'items');
+        
+        for (const item of queue) {
+          try {
+            if (item.action === 'create' && item.data) {
+              console.log('🔄 Syncing create:', item.data.title);
+              const response = await fetch(`${API_URL}/recipes`, {
+                method: 'POST',
+                headers: { 
+                  'Content-Type': 'application/json',
+                  'Authorization': `Bearer ${token}`,
+                },
+                body: JSON.stringify(item.data),
+              });
+              
+              if (response.ok) {
+                const savedRecipe = await response.json();
+                console.log('✅ Synced create:', savedRecipe._id);
                 
-                if (response.ok) {
-                  const savedRecipe = await response.json();
-                  console.log('✅ Synced create:', savedRecipe._id);
-                  
-                  // Mettre à jour IndexedDB avec le vrai ID
-                  const db = await idb.initDB();
-                  await db.delete('recipes', item.recipeId);
-                  await db.put('recipes', { 
-                    ...savedRecipe, 
-                    _id: savedRecipe._id,
-                    synced: true,
-                    userId: session.user.id 
-                  });
-                }
-              } else if (item.action === 'update') {
-                await fetch(`${API_URL}/recipes/${item.recipeId}`, {
-                  method: 'PATCH',
-                  headers: { 
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`,
-                  },
-                  body: JSON.stringify(item.data),
-                });
-              } else if (item.action === 'delete') {
-                await fetch(`${API_URL}/recipes/${item.recipeId}`, {
-                  method: 'DELETE',
-                  headers: {
-                    'Authorization': `Bearer ${token}`,
-                  },
+                const db = await idb.initDB();
+                await db.delete('recipes', item.recipeId);
+                await db.put('recipes', { 
+                  ...savedRecipe, 
+                  _id: savedRecipe._id,
+                  synced: true,
+                  userId: session.user.id 
                 });
               }
-            } catch (error) {
-              console.error('❌ Sync item error:', error);
+            } else if (item.action === 'update' && item.data) {
+              await fetch(`${API_URL}/recipes/${item.recipeId}`, {
+                method: 'PATCH',
+                headers: { 
+                  'Content-Type': 'application/json',
+                  'Authorization': `Bearer ${token}`,
+                },
+                body: JSON.stringify(item.data),
+              });
+            } else if (item.action === 'delete') {
+              await fetch(`${API_URL}/recipes/${item.recipeId}`, {
+                method: 'DELETE',
+                headers: {
+                  'Authorization': `Bearer ${token}`,
+                },
+              });
             }
+          } catch (error) {
+            console.error('❌ Sync item error:', error);
           }
-          
-          await idb.clearSyncQueue();
-          console.log('✅ Sync completed');
-        } catch (error) {
-          console.error('❌ Sync error:', error);
         }
+        
+        await idb.clearSyncQueue();
+        console.log('✅ Sync completed');
+      } catch (error) {
+        console.error('❌ Sync error:', error);
       }
     }
+  }
 
-    syncData();
-  }, [isOnline, session?.user?.id, token]);
+  syncData();
+}, [isOnline, session?.user?.id, token]);
 
   const addRecipe = async (recipe: any) => {
   if (!session?.user?.id) {
