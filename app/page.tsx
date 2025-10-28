@@ -117,7 +117,7 @@ export default function Home() {
                 </span>
               </div>
 
-              {/* AI Chef - NEW */}
+              {/* AI Chef */}
               <Link
                 href="/ai-chef"
                 className="group flex items-center gap-2 px-4 py-2.5 rounded-xl hover:bg-gradient-to-r from-purple-50 to-pink-50 transition-all border border-gray-200 bg-white shadow-md hover:shadow-lg hover:border-purple-200"
@@ -126,15 +126,24 @@ export default function Home() {
                 <span className="text-sm font-semibold text-gray-700 group-hover:text-purple-600 transition-colors">Chef IA</span>
               </Link>
 
+              {/* 🧊 Fridge Scanner - NEW */}
+              <Link
+                href="/fridge-scanner"
+                className="group flex items-center gap-2 px-4 py-2.5 rounded-xl hover:bg-gradient-to-r from-blue-50 to-cyan-50 transition-all border border-gray-200 bg-white shadow-md hover:shadow-lg hover:border-blue-200"
+              >
+                <span className="text-xl group-hover:scale-125 transition-transform">🧊</span>
+                <span className="text-sm font-semibold text-gray-700 group-hover:text-blue-600 transition-colors">Scanner Frigo</span>
+              </Link>
+
               {/* Découvrir */}
               <Link
                 href="/discover"
-                className="group flex items-center gap-2 px-4 py-2.5 rounded-xl hover:bg-gradient-to-r from-blue-50 to-cyan-50 transition-all border border-gray-200 bg-white shadow-md hover:shadow-lg hover:border-blue-200"
+                className="group flex items-center gap-2 px-4 py-2.5 rounded-xl hover:bg-gradient-to-r from-emerald-50 to-teal-50 transition-all border border-gray-200 bg-white shadow-md hover:shadow-lg hover:border-emerald-200"
               >
-                <svg className="w-5 h-5 text-gray-700 group-hover:text-blue-600 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-5 h-5 text-gray-700 group-hover:text-emerald-600 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                 </svg>
-                <span className="text-sm font-semibold text-gray-700 group-hover:text-blue-600 transition-colors">Découvrir</span>
+                <span className="text-sm font-semibold text-gray-700 group-hover:text-emerald-600 transition-colors">Découvrir</span>
               </Link>
               
               {/* Bouton Nouvelle Recette amélioré */}
@@ -230,6 +239,14 @@ export default function Home() {
               >
                 <span className="text-xl">🤖</span>
               </Link>
+
+              {/* 🧊 Fridge Scanner Mobile - NEW */}
+              <Link
+                href="/fridge-scanner"
+                className="p-2.5 rounded-xl hover:bg-blue-100 transition border border-gray-200 bg-white shadow-md"
+              >
+                <span className="text-xl">🧊</span>
+              </Link>
               
               <Link
                 href="/discover"
@@ -251,7 +268,6 @@ export default function Home() {
         </div>
       </header>
 
-      {/* Rest of your code remains the same... */}
       {/* Hero Section amélioré */}
       <section className="container mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
         <div className="max-w-3xl mx-auto text-center mb-8 animate-fadeIn">
