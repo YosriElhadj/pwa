@@ -1,5 +1,6 @@
 import type { NextAuthConfig } from 'next-auth';
 import Credentials from 'next-auth/providers/credentials';
+import Google from 'next-auth/providers/google';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001/api';
 
@@ -15,6 +16,17 @@ export const authConfig: NextAuthConfig = {
     signIn: '/login',
   },
   providers: [
+    Google({
+      clientId: process.env.GOOGLE_CLIENT_ID!,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
+      authorization: {
+        params: {
+          prompt: "consent",
+          access_type: "offline",
+          response_type: "code"
+        }
+      }
+    }),
     Credentials({
       credentials: {
         email: { label: 'Email', type: 'email' },
@@ -66,13 +78,46 @@ export const authConfig: NextAuthConfig = {
       
       return isLoggedIn;
     },
-    async jwt({ token, user }) {
+    async signIn({ user, account, profile }) {
+      // Handle Google OAuth
+      if (account?.provider === 'google') {
+        try {
+          const response = await fetch(`${API_URL}/auth/google`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              email: user.email,
+              name: user.name,
+              googleId: account.providerAccountId,
+              avatar: user.image,
+            }),
+          });
+
+          if (!response.ok) {
+            console.error('Google auth failed:', response.status);
+            return false;
+          }
+          
+          const data = await response.json();
+          user.id = data.user.id;
+          (user as any).accessToken = data.access_token;
+          
+          return true;
+        } catch (error) {
+          console.error('Google auth error:', error);
+          return false;
+        }
+      }
+      
+      return true;
+    },
+    async jwt({ token, user, account }) {
       if (user) {
         const userWithToken = user as UserWithToken;
         token.id = userWithToken.id;
         token.email = userWithToken.email;
         token.name = userWithToken.name;
-        token.accessToken = userWithToken.accessToken;
+        token.accessToken = (user as any).accessToken || userWithToken.accessToken;
       }
       return token;
     },
