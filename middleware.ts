@@ -1,5 +1,13 @@
 export { auth as middleware } from '@/lib/auth';
 
 export const config = {
-  matcher: ['/((?!api|_next/static|_next/image|favicon.ico|icons|manifest.json|sw.js|workbox-*).*)'],
+  // ✅ Protéger UNIQUEMENT les routes privées, pas les pages publiques
+  matcher: [
+    '/',
+    '/recipes/:path*',
+    '/ai-chef',
+    '/fridge-scanner',
+    '/pantry',
+    '/discover',
+  ],
 };
